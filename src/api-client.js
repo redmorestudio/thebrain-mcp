@@ -17,10 +17,14 @@ export class TheBrainAPI {
   async request(method, endpoint, options = {}) {
     const url = `${this.baseUrl}${endpoint}`;
     
+    // Properly merge headers to avoid overwriting Authorization
     const fetchOptions = {
       method,
-      headers: { ...this.headers },
       ...options,
+      headers: {
+        ...this.headers,
+        ...options.headers,  // Merge custom headers AFTER default headers
+      },
     };
 
     // Add Content-Type for JSON payloads
