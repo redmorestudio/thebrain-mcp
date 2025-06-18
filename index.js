@@ -41,6 +41,33 @@ const server = new Server(
 // Brain context management
 let activeBrainId = process.env.THEBRAIN_DEFAULT_BRAIN_ID || null;
 
+// Helper function to format tool results according to MCP protocol
+function formatToolResult(result) {
+  // MCP expects tool results to have a content array
+  // Each content item should have a type and text as a plain string
+  
+  let textContent;
+  if (typeof result === 'string') {
+    textContent = result;
+  } else if (result === null || result === undefined) {
+    textContent = 'null';
+  } else {
+    textContent = JSON.stringify(result, null, 2);
+  }
+  
+  // Ensure textContent is always a string
+  textContent = String(textContent);
+  
+  return {
+    content: [
+      {
+        type: 'text',
+        text: textContent  // Direct string, not nested object
+      }
+    ]
+  };
+}
+
 // List available tools
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
@@ -58,94 +85,121 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       args.brainId = activeBrainId;
     }
 
+    let result;
+
     switch (name) {
       // Brain Management
       case 'list_brains':
-        return await handlers.listBrains(api);
+        result = await handlers.listBrains(api);
+        break;
       
       case 'get_brain':
-        return await handlers.getBrain(api, args);
+        result = await handlers.getBrain(api, args);
+        break;
       
       case 'set_active_brain':
-        const result = await handlers.setActiveBrain(api, args);
+        result = await handlers.setActiveBrain(api, args);
         if (result.success) {
           activeBrainId = args.brainId;
         }
-        return result;
+        break;
 
       // Thought Operations
       case 'create_thought':
-        return await handlers.createThought(api, args);
+        result = await handlers.createThought(api, args);
+        break;
       
       case 'get_thought':
-        return await handlers.getThought(api, args);
+        result = await handlers.getThought(api, args);
+        break;
       
       case 'update_thought':
-        return await handlers.updateThought(api, args);
+        result = await handlers.updateThought(api, args);
+        break;
       
       case 'delete_thought':
-        return await handlers.deleteThought(api, args);
+        result = await handlers.deleteThought(api, args);
+        break;
       
       case 'search_thoughts':
-        return await handlers.searchThoughts(api, args);
+        result = await handlers.searchThoughts(api, args);
+        break;
       
       case 'get_thought_graph':
-        return await handlers.getThoughtGraph(api, args);
+        result = await handlers.getThoughtGraph(api, args);
+        break;
         
       // Link Operations with Graphical Properties
       case 'create_link':
-        return await handlers.createLink(api, args);
+        result = await handlers.createLink(api, args);
+        break;
       
       case 'update_link':
-        return await handlers.updateLink(api, args);
+        result = await handlers.updateLink(api, args);
+        break;
       
       case 'get_link':
-        return await handlers.getLink(api, args);
+        result = await handlers.getLink(api, args);
+        break;
       
       case 'delete_link':
-        return await handlers.deleteLink(api, args);
+        result = await handlers.deleteLink(api, args);
+        break;
         
       // Attachment Operations (Images/Files)
       case 'add_file_attachment':
-        return await handlers.addFileAttachment(api, args);
+        result = await handlers.addFileAttachment(api, args);
+        break;
       
       case 'add_url_attachment':
-        return await handlers.addUrlAttachment(api, args);
+        result = await handlers.addUrlAttachment(api, args);
+        break;
       
       case 'get_attachment':
-        return await handlers.getAttachment(api, args);
+        result = await handlers.getAttachment(api, args);
+        break;
       
       case 'get_attachment_content':
-        return await handlers.getAttachmentContent(api, args);
+        result = await handlers.getAttachmentContent(api, args);
+        break;
       
       case 'delete_attachment':
-        return await handlers.deleteAttachment(api, args);
+        result = await handlers.deleteAttachment(api, args);
+        break;
       
       case 'list_attachments':
-        return await handlers.listAttachments(api, args);
+        result = await handlers.listAttachments(api, args);
+        break;
         
       // Note Operations
       case 'get_note':
-        return await handlers.getNote(api, args);
+        result = await handlers.getNote(api, args);
+        break;
       
       case 'create_or_update_note':
-        return await handlers.createOrUpdateNote(api, args);
+        result = await handlers.createOrUpdateNote(api, args);
+        break;
       
       case 'append_to_note':
-        return await handlers.appendToNote(api, args);
+        result = await handlers.appendToNote(api, args);
+        break;
         
       // Advanced Operations
       case 'get_types':
-        return await handlers.getTypes(api, args);
+        result = await handlers.getTypes(api, args);
+        break;
       
       case 'get_tags':
-        return await handlers.getTags(api, args);
+        result = await handlers.getTags(api, args);
+        break;
       
       case 'get_brain_stats':
-        return await handlers.getBrainStats(api, args);
+        result = await handlers.getBrainStats(api, args);
+        break;
       
       case 'get_modifications':
-        return await handlers.getModifications(api, args);
+        result = await handlers.getModifications(api, args);
+        break;
 
       default:
         throw new McpError(
@@ -153,16 +207,22 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           `Unknown tool: ${name}`
         );
     }
+
+    // Format the result according to MCP protocol
+    return formatToolResult(result);
+
   } catch (error) {
     if (error instanceof McpError) {
       throw error;
     }
 
     console.error(`Error executing tool ${name}:`, error);
-    throw new McpError(
-      ErrorCode.InternalError,
-      `Tool execution failed: ${error.message}`
-    );
+    
+    // Return error in MCP format
+    return formatToolResult({
+      success: false,
+      error: error.message
+    });
   }
 });
 
