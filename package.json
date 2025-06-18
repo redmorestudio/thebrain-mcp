@@ -1,0 +1,33 @@
+{
+  "name": "thebrain-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for TheBrain API - enables AI assistants to interact with TheBrain knowledge management system",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "mcp",
+    "thebrain",
+    "knowledge-management",
+    "ai",
+    "claude"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "dotenv": "^16.0.3",
+    "node-fetch": "^3.3.0",
+    "form-data": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
