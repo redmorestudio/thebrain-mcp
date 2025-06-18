@@ -117,10 +117,9 @@ export class TheBrainAPI {
     }
 
     return this.request('PATCH', `/thoughts/${brainId}/${thoughtId}`, {
-      headers: {
-        'Content-Type': 'application/json-patch+json',
+      body: {
+        patchDocument: patches,
       },
-      body: patches,
     });
   }
 
@@ -176,10 +175,9 @@ export class TheBrainAPI {
     }
 
     return this.request('PATCH', `/links/${brainId}/${linkId}`, {
-      headers: {
-        'Content-Type': 'application/json-patch+json',
+      body: {
+        patchDocument: patches,
       },
-      body: patches,
     });
   }
 
