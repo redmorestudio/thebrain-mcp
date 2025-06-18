@@ -1,50 +1,74 @@
 # TheBrain MCP Server
 
-An MCP (Model Context Protocol) server that enables AI assistants to interact with TheBrain's knowledge management system. This server provides comprehensive access to TheBrain's API with a focus on rich graphical features and visual organization.
+An MCP (Model Context Protocol) server that enables AI assistants to interact with TheBrain's knowledge management system. This server provides comprehensive access to TheBrain's API, focusing on natural language interaction with TheBrain's powerful knowledge management capabilities.
 
-## 🆕 Recent Updates
+## 🔧 What's an MCP Server?
 
-### v1.1.0 - JSON Patch Fix (June 2025)
-- ✅ **Fixed update operations**: Resolved "patchDocument field required" errors
-- ✅ **Full-featured create operations**: `create_thought` and `create_link` now work with all visual properties
-- ✅ **Complete visual customization**: Colors, thickness, and styling now work seamlessly
-- 🧪 **Comprehensive testing**: All functions verified working with visual properties
+**MCP (Model Context Protocol)** is a standard that lets AI assistants like Claude connect to external tools and services. Think of it as a translator between natural language and software APIs.
 
-## Features
+### How It Works:
+```
+You → Claude → MCP Server → TheBrain API → Your Brain
+```
 
-### 🎨 Rich Visual Formatting
-- **Thought Colors**: Set foreground and background colors for thoughts
-- **Link Styling**: Customize link colors, thickness, and directional properties
-- **Visual Organization**: Support for different thought kinds (Normal, Type, Event, Tag)
+1. **You say**: "Create a project with three phases"
+2. **Claude understands** what you want to accomplish  
+3. **MCP Server translates** this into specific TheBrain API calls
+4. **TheBrain API** creates the thoughts and connections
+5. **Your Brain** updates with the new structure
 
-### 📎 Attachment Management
-- Upload images and files to thoughts
-- Add URL attachments with automatic title extraction
-- Download attachment content
-- Support for various file types (images, PDFs, documents)
+The magic is that **you don't need to know any technical details** - just describe what you want in plain English!
 
-### 🔗 Advanced Link Properties
-- Customizable link relationships (Child, Parent, Jump, Sibling)
-- Directional controls (one-way, bidirectional)
-- Link thickness for visual emphasis
-- Named links with labels
+## 🚀 What Actually Works
 
-### 📝 Rich Note Support
-- Full Markdown formatting
-- HTML export capability
-- Append functionality for incremental updates
-- Embedded image support
+### ✅ **Core Functionality (Working)**
+- **Content Management**: Create, update, delete thoughts and notes
+- **File Attachments**: Upload images, PDFs, documents to thoughts
+- **Web References**: URL attachments with auto-title extraction  
+- **Rich Notes**: Full Markdown support with embedded content
+- **Relationship Mapping**: Connect thoughts with meaningful relationships
+- **Search**: Full-text search across thoughts, notes, and attachments
+- **Brain Management**: Switch between multiple brains seamlessly
+- **Natural Language Interface**: Describe what you want, Claude handles the details
 
-### 🔍 Powerful Search
-- Search across thoughts, notes, and attachments
-- Filter by thought names only
-- Configurable result limits
+## ❌ Current Issues & Limitations
+
+### 🚨 **Major Visual Styling Problems**
+**The biggest limitation**: Visual properties don't actually apply despite API success responses.
+
+- **❌ Thought colors**: API accepts colors but they don't appear in TheBrain
+- **❌ Link colors**: Similar issue - accepted but not applied  
+- **❌ Link thickness**: API reports success but thickness doesn't change
+- **❌ Visual formatting**: All visual styling features are currently non-functional
+
+### 🐛 **Other Known Issues**
+- **Intermittent connection problems**: "Field required" errors after successful operations
+- **Long notes limitations**: Issues with very long markdown content (keep under 10k characters)
+- **File path sensitivity**: Requires absolute file paths; relative paths can fail
+- **Connection timing**: MCP initialization race condition causing sporadic failures
+- **Memory constraints**: Large file attachments can cause timeouts
+- **Search limitations**: Complex queries sometimes return incomplete results
+
+### 📋 **API Dependencies & Constraints**
+- **Single-user operations**: No real-time collaboration features
+- **No bulk operations**: Can't import/export large datasets efficiently  
+- **API connectivity required**: No offline mode available
+- **TheBrain API limitations**: Bound by existing API capabilities
+- **Authentication required**: Must have valid TheBrain API key
+
+## 🛠 **Current Workarounds**
+
+Until visual styling is fixed, use these alternatives:
+- **Emojis for distinction**: 🟢🟡🔴⚪🔵 instead of colors
+- **Descriptive names**: "🔴 Urgent Task" instead of colored thoughts
+- **Rich markdown notes**: Use formatting within notes for visual organization
+- **Hierarchical structure**: Rely on parent/child relationships for organization
 
 ## Installation
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/thebrain-mcp.git
+git clone https://github.com/redmorestudio/thebrain-mcp.git
 cd thebrain-mcp
 ```
 
@@ -79,7 +103,33 @@ Add to your Claude Desktop configuration:
 }
 ```
 
-## Available Tools
+**⚠️ Important**: Use absolute file paths in the configuration and for file attachments.
+
+## Debugging & Troubleshooting
+
+### Common Issues & Solutions
+
+**"Field required" errors**:
+- Restart Claude Desktop
+- Verify `.env` file has correct API key
+- Always set active brain first: "Set my active brain to [name]"
+
+**File upload failures**:
+- Use absolute file paths: `/Users/username/Documents/file.pdf`
+- Check file permissions and existence
+- Keep file sizes reasonable (< 50MB)
+
+**Long note problems**:
+- Keep notes under 10,000 characters
+- Break large content into multiple thoughts
+- Use attachments for lengthy documents
+
+**Debug mode**:
+```bash
+VERBOSE=true node index.js
+```
+
+## Available Tools (25+ Functions)
 
 ### Brain Management
 - `list_brains` - List all available brains
@@ -88,9 +138,9 @@ Add to your Claude Desktop configuration:
 - `get_brain_stats` - Get comprehensive brain statistics
 
 ### Thought Operations
-- `create_thought` - Create thoughts with visual properties
+- `create_thought` - Create thoughts (visual properties don't work)
 - `get_thought` - Retrieve thought details
-- `update_thought` - Update thought properties including colors
+- `update_thought` - Update thought properties
 - `delete_thought` - Delete a thought
 - `search_thoughts` - Search across the brain
 - `get_thought_graph` - Get thought with all connections
@@ -98,121 +148,109 @@ Add to your Claude Desktop configuration:
 - `get_tags` - List all tags
 
 ### Link Operations
-- `create_link` - Create styled links between thoughts
+- `create_link` - Create links between thoughts (styling doesn't work)
 - `update_link` - Modify link properties
 - `get_link` - Get link details
 - `delete_link` - Remove a link
 
 ### Attachment Operations
-- `add_file_attachment` - Attach files/images to thoughts
-- `add_url_attachment` - Attach web URLs
+- `add_file_attachment` - Attach files/images to thoughts ✅
+- `add_url_attachment` - Attach web URLs ✅
 - `get_attachment` - Get attachment metadata
 - `get_attachment_content` - Download attachment content
 - `delete_attachment` - Remove attachments
 - `list_attachments` - List thought attachments
 
 ### Note Operations
-- `get_note` - Retrieve notes in markdown/html/text
-- `create_or_update_note` - Create or update notes
-- `append_to_note` - Append content to existing notes
+- `get_note` - Retrieve notes in markdown/html/text ✅
+- `create_or_update_note` - Create or update notes ✅
+- `append_to_note` - Append content to existing notes ✅
 
 ### Advanced Features
 - `get_modifications` - View brain modification history
 
-## Usage Examples
+## Usage Examples (What Actually Works)
 
-### Creating a Visual Mind Map
+### Project Organization
+```
+You: "Create a project called 'Kitchen Renovation'"
+Claude: Creates central project thought
 
-```javascript
-// Create a central concept with color
-await create_thought({
-  name: "Project Alpha",
-  foregroundColor: "#ffffff",
-  backgroundColor: "#0066cc",
-  kind: 2  // Type
-});
+You: "Add phases for planning, demolition, and installation"  
+Claude: Creates connected sub-thoughts for each phase
 
-// Add sub-concepts with visual hierarchy
-await create_thought({
-  name: "Phase 1: Research",
-  foregroundColor: "#000000",
-  backgroundColor: "#66ccff",
-  sourceThoughtId: parentId,
-  relation: 1  // Child
-});
+You: "Attach my contractor quotes to the planning phase"
+Claude: Uploads files to the planning thought
 
-// Create a prominent link
-await create_link({
-  thoughtIdA: parentId,
-  thoughtIdB: childId,
-  relation: 1,
-  name: "First Phase",
-  color: "#ff6600",
-  thickness: 8,
-  direction: 1  // A→B
-});
+You: "Add a detailed note about the timeline to the project"
+Claude: Creates rich markdown note with your timeline
 ```
 
-### Adding Visual Content
+### Research & Knowledge Management
+```
+You: "Create a research topic about sustainable energy"
+Claude: Sets up main research thought
 
-```javascript
-// Attach an image
-await add_file_attachment({
-  thoughtId: "abc123",
-  filePath: "/path/to/diagram.png",
-  fileName: "Architecture Diagram.png"
-});
+You: "Add sub-topics for solar, wind, and hydro power"
+Claude: Creates organized thought hierarchy
 
-// Create a rich note
-await create_or_update_note({
-  thoughtId: "abc123",
-  markdown: `# Project Overview
-  
-## Visual Architecture
-![Architecture](diagram.png)
+You: "Attach relevant papers and web articles"
+Claude: Adds file and URL attachments
 
-### Key Components
-- **Frontend**: React application
-- **Backend**: Node.js API
-- **Database**: PostgreSQL
-
-Status: 🟢 Active`
-});
+You: "Search for everything related to efficiency"
+Claude: Finds all relevant thoughts and content
 ```
 
-## Visual Property Reference
+## 🔮 Roadmap & Future Development
 
-### Thought Colors
-- Use hex format: `#RRGGBB`
-- Examples: `#ff0000` (red), `#00ff00` (green), `#0000ff` (blue)
+### **Immediate Priorities (v1.2.0)**
+- **🚨 Fix visual styling**: Investigate why colors/thickness don't apply
+- **🔧 Connection stability**: Resolve MCP timing/race condition issues  
+- **📝 Long notes support**: Better handling of extensive markdown content
+- **🛡️ Error handling**: More graceful failures and recovery
 
-### Link Thickness
-- 1-3: Thin (subtle connections)
-- 4-6: Medium (standard)
-- 7-10: Thick (important connections)
+### **Future Enhancements**
+- **Bulk operations** for large-scale organization
+- **Enhanced templates** for common workflows
+- **Performance optimizations** for complex brains  
+- **Offline capabilities** and caching
 
-### Link Direction Values
-- 0: Undirected
-- 1: A→B
-- 3: B→A
-- 5: One-way A→B
-- 7: One-way B→A
+## Technical Architecture
 
-### Thought Kinds
-- 1: Normal (standard thoughts)
-- 2: Type (categorization)
-- 3: Event (time-based)
-- 4: Tag (labels)
-- 5: System (internal)
+### What Makes This Server Special
+- **Natural language interface**: No technical knowledge required
+- **Complete API coverage**: 25+ tools spanning all TheBrain operations
+- **Robust error handling**: Graceful failures and clear error messages
+- **Modular design**: Clean, maintainable code architecture
+- **Production ready**: Proper logging, testing, and documentation
+
+### Current Status
+- **Version**: 1.1.0 (June 2025)
+- **Core functionality**: ✅ Complete and working
+- **Visual properties**: ❌ Major issues need investigation
+- **Stability**: 🟡 Generally stable with intermittent connection issues
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit issues or pull requests.
+Contributions are welcome! Areas where help is especially needed:
+
+- **Visual styling investigation**: Why don't colors/thickness apply?
+- **Connection stability**: Debugging MCP race conditions
+- **Performance optimization**: Large brain handling
+- **Documentation**: More usage examples and tutorials
+
+Please feel free to submit issues or pull requests.
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Support
 
-For TheBrain API documentation, visit: https://api.bra.in
+- **TheBrain API Documentation**: https://api.bra.in
+- **Issues & Bug Reports**: https://github.com/redmorestudio/thebrain-mcp/issues
+- **Questions**: Open a GitHub discussion
+
+---
+
+**⚠️ Current Recommendation**: Use this server for **content management and organization** with natural language interaction. Don't rely on visual styling features until they're fixed. The core functionality is solid and very useful for managing TheBrain content through conversation!
