@@ -2,6 +2,14 @@
 
 An MCP (Model Context Protocol) server that enables AI assistants to interact with TheBrain's knowledge management system. This server provides comprehensive access to TheBrain's API with a focus on rich graphical features and visual organization.
 
+## 🆕 Recent Updates
+
+### v1.1.0 - JSON Patch Fix (June 2025)
+- ✅ **Fixed update operations**: Resolved "patchDocument field required" errors
+- ✅ **Full-featured create operations**: `create_thought` and `create_link` now work with all visual properties
+- ✅ **Complete visual customization**: Colors, thickness, and styling now work seamlessly
+- 🧪 **Comprehensive testing**: All functions verified working with visual properties
+
 ## Features
 
 ### 🎨 Rich Visual Formatting
